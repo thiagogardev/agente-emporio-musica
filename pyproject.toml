@@ -1,0 +1,29 @@
+[project]
+name = "agente-emporio-musica"
+version = "0.1.0"
+description = "Agente de atendimento por texto para a Empório da Música (desafio técnico Artefact, AI Engineer)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Thiago Garofalo" }]
+dependencies = [
+  "anthropic>=1.0",
+  "python-dotenv>=1.0",
+  "tzdata>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+emporio = "emporio.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["emporio"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
