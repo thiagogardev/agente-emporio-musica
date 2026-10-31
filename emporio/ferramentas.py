@@ -115,7 +115,7 @@ def buscar_produtos(
     categoria: str = "",
     preco_max: float | None = None,
     incluir_indisponiveis: bool = False,
-    limite: int = 10,
+    limite: int = 15,
 ) -> dict[str, Any]:
     cat = db.categoria_por_nome(categoria) if categoria else None
     if categoria and not cat:
