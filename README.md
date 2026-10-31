@@ -2,7 +2,7 @@
 
 Protótipo de agente de atendimento por texto para a Empório da Música, loja fictícia de instrumentos musicais de Campo Grande (MS). Desafio técnico da vaga de AI Engineer (Artefact).
 
-> **Summary in English.** A text-based customer-service agent for a fictional music-instrument store, built in Python on the Anthropic API (Claude Sonnet 5.5). The store's 8-page policy manual goes whole into the cached system prompt; operational data (catalog, stock, promotions, orders) is reached through five function-calling tools, so the model never quotes prices or stock from memory. Business rules from the manual (PIX discount, installment minimums, non-cumulative promotions, identity check before order data) live in code and are covered by 34 tests that run without the API. Five example conversations, recorded from real runs without editing, are in [`exemplos/`](exemplos/). The rest of this README (setup, architecture, decisions, limitations, AI-assistant usage) is in Portuguese, the language of the challenge material.
+> **English version:** [README.en.md](README.en.md). The code, comments and example conversations are in Portuguese, the language of the challenge material and of the store's customers.
 
 O agente assume a persona da loja, responde com base no manual de políticas, consulta os dados da operação (catálogo, estoque, promoções, pedidos) por function calling e recusa com educação o que foge do escopo.
 
