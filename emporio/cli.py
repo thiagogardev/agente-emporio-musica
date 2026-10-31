@@ -27,6 +27,11 @@ def salvar_transcricao(agente: Agente, caminho: Path, titulo: str = "") -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows: garante acentuação correta no terminal (inclusive no --help).
+    for fluxo in (sys.stdout, sys.stderr):
+        if hasattr(fluxo, "reconfigure"):
+            fluxo.reconfigure(encoding="utf-8")
+
     parser = argparse.ArgumentParser(prog="emporio", description=f"Agente de atendimento da {LOJA['nome']}")
     parser.add_argument("-m", "--mensagem", help="responde uma única mensagem e encerra")
     parser.add_argument("--salvar", type=Path, help="arquivo .md para gravar a transcrição ao final")
@@ -34,11 +39,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--debug", action="store_true", help="mostra ferramentas chamadas e tokens por resposta")
     args = parser.parse_args(argv)
 
-    try:
-        agente = Agente(modelo=args.modelo)
-    except anthropic.AnthropicError as e:
-        print(f"Não consegui iniciar o cliente da API: {e}\nDefina ANTHROPIC_API_KEY no arquivo .env (veja .env.example).", file=sys.stderr)
+    cliente = anthropic.Anthropic()
+    if not (cliente.api_key or cliente.auth_token or getattr(cliente, "credentials", None)):
+        print("Nenhuma credencial encontrada. Defina ANTHROPIC_API_KEY no arquivo .env (veja .env.example).", file=sys.stderr)
         return 2
+    agente = Agente(cliente=cliente, modelo=args.modelo)
 
     def falar(texto: str) -> None:
         try:
