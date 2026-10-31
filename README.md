@@ -9,7 +9,17 @@ Você: tem violão de nylon até mil reais?
 Agente: Tem sim! Consultei aqui o catálogo e separei as opções de nylon até R$ 1.000 que estão em estoque: ...
 ```
 
-Conversas completas de exemplo estão em [`exemplos/`](exemplos/).
+Conversas completas de exemplo, gravadas de execuções reais, estão em [`exemplos/`](exemplos/):
+
+| Conversa | O que mostra |
+|---|---|
+| [01 · Catálogo: violões até R$ 1.000](exemplos/01-catalogo-violoes-ate-1000.md) | busca com filtro de preço, PIX e parcelamento de um item |
+| [02 · Preço: Takamine GD20 e produto em promoção](exemplos/02-preco-takamine-e-promocao.md) | preço promocional com original e percentual; promoção não acumula com PIX |
+| [03 · Pedido com confirmação de identidade](exemplos/03-pedido-com-confirmacao-de-identidade.md) | pede contato antes de consultar; status de pedido pendente |
+| [04 · Devolução por arrependimento](exemplos/04-devolucao-por-arrependimento.md) | **caso não trivial**: cruza a política de 7 dias com a data real do pedido e explica o que ainda cabe |
+| [05 · Fora de escopo e produto sem estoque](exemplos/05-fora-de-escopo-e-produto-indisponivel.md) | recusa acessórios e assunto alheio; produto sem estoque com alternativas |
+
+Cada arquivo registra as ferramentas chamadas em cada turno e os tokens da conversa. Para regravar: `python scripts/gravar_exemplos.py`.
 
 ## Como rodar
 
@@ -101,7 +111,7 @@ As regras de preço do manual estão em código, não no prompt: PIX com 5% sobr
 
 `pytest` roda 34 testes sobre a camada de dados e as ferramentas, sem chamar a API: regras de parcelamento e PIX, busca com e sem promoção, produtos indisponíveis, descontinuados e em breve, confirmação de identidade no pedido, cálculo de horário em quatro momentos da semana. Eles protegem exatamente as regras que o manual chama de inegociáveis.
 
-O comportamento do modelo (decidir qual ferramenta chamar, tom, recusa fora de escopo) foi validado com as conversas em [`exemplos/`](exemplos/), gravadas de execuções reais.
+O comportamento do modelo (decidir qual ferramenta chamar, tom, recusa fora de escopo) foi validado com as conversas em [`exemplos/`](exemplos/), gravadas de execuções reais pelo script [`scripts/gravar_exemplos.py`](scripts/gravar_exemplos.py), que roda cenários fixos e salva a transcrição sem edição. Nas cinco conversas o modelo escolheu a ferramenta certa em todos os turnos e não chamou nenhuma quando a resposta estava no manual ou fora do escopo. Custo total das cinco gravações: cerca de 20 mil tokens de entrada (a maior parte servida do cache) e 5 mil de saída.
 
 ## Limitações conhecidas e o que eu faria com mais tempo
 
@@ -119,14 +129,14 @@ Usei o **Claude Code** (Anthropic) como par de programação durante todo o dese
 1. Li o enunciado, o manual e os CSVs e defini a abordagem (contexto completo para políticas, ferramentas para dados, loop manual) antes de escrever código. As decisões deste README são minhas; o assistente ajudou a argumentar prós e contras.
 2. Pedi ao assistente a estrutura do projeto e a primeira versão de cada módulo, revisando arquivo por arquivo. Corrigi regras de negócio que vieram erradas na primeira versão (os mínimos de parcela por faixa, por exemplo, foram ajustados com testes que falharam de propósito).
 3. Os testes foram escritos junto com as ferramentas e rodados a cada mudança. Vários casos de borda dos dados (estoque zero, descontinuado, em breve, promoções inativas) foram encontrados explorando os CSVs com o assistente antes de codar.
-4. As conversas de exemplo foram geradas rodando o agente de verdade; nenhuma foi editada à mão.
+4. As conversas de exemplo foram geradas rodando o agente de verdade por um script; nenhuma foi editada à mão. Ao ler a primeira gravação, vi que a busca cortava a lista em 10 itens quando havia 14; subi o limite e regravei.
 5. Commits incrementais ao longo do trabalho, com mensagens escritas por mim.
 
 O assistente acelerou a parte mecânica (esqueleto, parsing, testes repetitivos) e serviu de revisor; a arquitetura, as decisões e a verificação final foram minhas.
 
 ## Entrega
 
-O enunciado pede o link do repositório na resposta ao e-mail do processo; o e-mail de abertura pede o envio de um PDF pelo Google Forms. Fiz os dois: respondi o e-mail com o link e enviei pelo formulário um PDF curto com o mesmo link e um resumo deste README. Suposições e ambiguidades do enunciado estão documentadas acima, como pedido.
+O enunciado pede o link do repositório na resposta ao e-mail do processo; o e-mail de abertura pede o envio de um PDF pelo Google Forms. Como as duas instruções coexistem, o link vai pelos dois canais: na resposta ao e-mail e num PDF curto enviado pelo formulário, com o mesmo link e um resumo deste README. Suposições e ambiguidades do enunciado estão documentadas acima, como pedido.
 
 ## Estrutura
 
@@ -139,6 +149,7 @@ emporio/
   cli.py           interface de linha de comando
 data/              CSVs, PDF original e manual em markdown
 exemplos/          conversas gravadas de execuções reais
+scripts/           gravar_exemplos.py roda os cenários e salva as transcrições
 tests/             34 testes das ferramentas
 ```
 
